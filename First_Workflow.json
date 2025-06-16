@@ -1,0 +1,436 @@
+{
+  "name": "First Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Test Form",
+        "formDescription": "Please Enter Your Details.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Salary",
+              "fieldType": "number",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "gmail",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Age",
+              "fieldType": "number",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "3adae756-ea17-4b3d-bc2c-990359e81fde",
+      "name": "On form submission",
+      "webhookId": "fe97ea15-7ee9-423b-88af-1fbe50710cc8"
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "value": "1sZ7wgRxsatDUgFV0jzffTt2IQM2mLVXy1m_vrEar1Co",
+          "mode": "list",
+          "cachedResultName": "n8n demo spread sheet",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1sZ7wgRxsatDUgFV0jzffTt2IQM2mLVXy1m_vrEar1Co/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1sZ7wgRxsatDUgFV0jzffTt2IQM2mLVXy1m_vrEar1Co/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $json.Name }}",
+            "Salary ": "={{ $json.Salary }}",
+            "gmail": "={{ $json.gmail }}",
+            "age": "={{ $json.Age }}",
+            "rejected ": "={{ $if(\"$json.Salary == 200000\", \"FALSE\", \"TRUE\") }}"
+          },
+          "matchingColumns": [
+            "gmail"
+          ],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Salary ",
+              "displayName": "Salary ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "gmail",
+              "displayName": "gmail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "age",
+              "displayName": "age",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "rejected ",
+              "displayName": "rejected ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        220,
+        0
+      ],
+      "id": "22c020b1-f129-4e45-b426-0fe55d5c6e1a",
+      "name": "Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "TuvK1OYkW82xWaYA",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "7a7a0dd5-3d83-427a-9bcd-f28573b0e906",
+              "leftValue": "={{ $json['Salary '] }}",
+              "rightValue": 50000,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        440,
+        0
+      ],
+      "id": "7ee05d0a-b230-4254-98dc-841c568334ee",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Google Sheets').item.json['Salary '] }}",
+                    "rightValue": 100000,
+                    "operator": {
+                      "type": "number",
+                      "operation": "lte"
+                    },
+                    "id": "42fea961-6a80-4395-8317-7e4dbc6f31dd"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "These employee salary is below lakh"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "036b9b1d-6272-48e4-8dc6-7269986f3d98",
+                    "leftValue": "={{ $('Google Sheets').item.json['Salary '] }}",
+                    "rightValue": 100000,
+                    "operator": {
+                      "type": "number",
+                      "operation": "gte"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "These employee salary is above lakh"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        660,
+        0
+      ],
+      "id": "dd949690-bc24-42d3-af6d-3800946e7257",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Filter').item.json.gmail }}",
+        "subject": "mail for eligibility criteria",
+        "emailType": "text",
+        "message": "No you are not eligible for the loan because of your salary lesser than 1 lakh",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        900,
+        -100
+      ],
+      "id": "67e4bf9a-9c6a-4c83-9652-4afa401832e4",
+      "name": "Gmail",
+      "webhookId": "9638bd34-2218-4ffe-ab5b-871a7aa4d1cd",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "biGgsHR3JQllSIMq",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.gmail }}",
+        "subject": "mail for the loan elibility criteria",
+        "emailType": "text",
+        "message": "Congratulations! 🎊 you are eligible for the loan because of your salary grater than 1 lakh",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        900,
+        140
+      ],
+      "id": "2add4ccb-56d7-4458-9dff-08a9c961c1a8",
+      "name": "Gmail1",
+      "webhookId": "4501da63-0bd8-4a09-b8c3-fac9e7b412ac",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "biGgsHR3JQllSIMq",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1160,
+        0
+      ],
+      "id": "90998e5a-fbe4-41d2-a5fc-0a73a4f40a18",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "sendTo": "=santhosh04042006@gmail.com",
+        "subject": "hey one candidate apply for your bank loan",
+        "emailType": "text",
+        "message": "Hey ,  This person for your bank loan",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        1360,
+        0
+      ],
+      "id": "f9c99114-4762-4a1c-bf13-3bbcb211d551",
+      "name": "Gmail2",
+      "webhookId": "9638bd34-2218-4ffe-ab5b-871a7aa4d1cd",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "biGgsHR3JQllSIMq",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Gmail",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Gmail1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Gmail2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c3e70f3f-3d80-42ae-805b-666fece46032",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "6c020644bffa97495292c9189ac66928c0710001078e07a3f9a04d702775fe42"
+  },
+  "id": "85wUGinoJJJPNGzj",
+  "tags": [
+    {
+      "createdAt": "2025-06-14T17:26:31.416Z",
+      "updatedAt": "2025-06-14T17:26:31.416Z",
+      "id": "LH1ADMfucHrirbzL",
+      "name": "demo"
+    }
+  ]
+}
